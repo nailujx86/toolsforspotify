@@ -1,11 +1,9 @@
 {
-  "//1": "describes your app and its dependencies",
-  "//2": "https://docs.npmjs.com/files/package.json",
-  "//3": "updating this file will download and update your packages",
-  "name": "hello-express",
+  "name": "toolsforspotify",
   "version": "0.0.1",
-  "description": "A simple Node app built on Express, instantly up and running.",
+  "description": "A collection of web-based tools for spotify playlists.",
   "main": "server.js",
+  "author": "Julian Blazek <julian.blazek@outlook.de>",
   "scripts": {
     "start": "node --icu-data-dir=node_modules/full-icu server.js"
   },
@@ -21,7 +19,7 @@
     "node": "12.x"
   },
   "repository": {
-    "url": "https://glitch.com/edit/#!/hello-express"
+    "url": "https://github.com/nailujx86/toolsforspotify"
   },
   "license": "MIT",
   "keywords": [
