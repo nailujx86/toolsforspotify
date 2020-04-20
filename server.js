@@ -33,7 +33,7 @@ app.get('/authorize', (req, res) => {
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    redirectUri: `https://${process.env.PROJECT_DOMAIN}.glitch.me/callback`
+    redirectUri: `${process.env.HOSTURL}/callback`
   });
   var state = crypto.randomBytes(16).toString('hex');
   if(req.query.modern && req.query.modern == 'true') {
@@ -48,7 +48,7 @@ app.get('/callback', (req, res, next) => {
   var spotifyApi = new SpotifyWebApi({
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    redirectUri: `https://${process.env.PROJECT_DOMAIN}.glitch.me/callback`
+    redirectUri: `${process.env.HOSTURL}/callback`
   });
   try{
     throw new Error();
