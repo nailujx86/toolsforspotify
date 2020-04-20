@@ -1,4 +1,4 @@
-const SpotifyWebApi = require('../lib/spotify-web-api-node');
+const SpotifyWebApi = require('spotify-web-api-node');
 
 module.exports = (req, res, next) => {
   res.locals.loggedIn = false;
