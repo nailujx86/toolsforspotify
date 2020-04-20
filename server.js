@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const exphbs = require('express-handlebars');
 const cookieParser = require("cookie-parser");
@@ -8,7 +9,7 @@ const app = express();
 
 const requiresLogin = require('./middleware/requiresLogin');
 
-mongoose.connect(process.env.DATABASE_STRING, {useNewUrlParser: true, useUnifiedTopology: true});
+//mongoose.connect(process.env.DATABASE_STRING, {useNewUrlParser: true, useUnifiedTopology: true});
 
 var hbs = exphbs.create({defaultLayout: 'main', extname: 'hbs'});
 app.engine('hbs', hbs.engine);
@@ -21,7 +22,7 @@ app.use(require('./middleware/populateResLocal'));
 app.use(require('./middleware/spotifyRenew'));
 app.use(require('./middleware/showUsername'));
 
-const SpotifyWebApi = require('./lib/spotify-web-api-node');
+const SpotifyWebApi = require('spotify-web-api-node');
 var scopes = ['user-read-recently-played', 'user-library-read', 'playlist-modify-private', 'playlist-read-private'];
 
 app.get("/", (req, res) => {
