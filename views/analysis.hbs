@@ -1,0 +1,117 @@
+<h1>
+  {{meta.title}}
+</h1>
+<h3>
+  Track Tempo (in BPM)
+</h3>
+<canvas id="tempo"></canvas>
+<br>
+<h3>
+  Playlist Mood
+</h3>
+<canvas id="mood"></canvas>
+<br>
+<h3>
+  Playlist Mode
+</h3>
+<canvas id="mode"></canvas>
+<script id="data" type="application/json">
+  {{{data}}}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script>
+  var data = JSON.parse(document.getElementById("data").innerHTML);
+  var tempoList = data.map(t => t.tempo).filter(t => t > 0);
+  var tempos = Array(20).fill(0);
+  for(var i = 0; i < 200; i += 10) {
+    for(var j = 0; j < tempoList.length; j++) {
+      if(tempoList[j] >= i && tempoList[j] < i+10) {
+        tempos[i/10] += 1;
+      }
+    }
+  }
+  var features = {danceability: 0, energy: 0, acousticness: 0, instrumentalness: 0, liveness: 0, valence: 0, speechiness: 0};
+  var minorMode = 0;
+  var majorMode = 0;
+  var instrumentalCount = 0;
+  var acousticCount = 0;
+  for(var dataItem of data) {
+    for(var propName in features) {
+      features[propName] += dataItem[propName];
+    }
+    if(dataItem.mode == 0) {
+      minorMode++;
+    } else if(dataItem.mode == 1) {
+      majorMode++;
+    }
+    if(dataItem.instrumentalness > 0.7) {
+      instrumentalCount++;
+    }
+    if(dataItem.acousticness > 0.7) {
+      acousticCount++;
+    }
+  }
+  var dataCount = data.length;
+  for(var propName in features) {
+    features[propName] = Math.round((features[propName] / data.length) * 100);
+  }
+  Chart.defaults.global.animation.duration = 2000;
+  var tempoChart = new Chart("tempo", {
+    type: 'bar',
+    data: {
+      datasets: [{
+        label: "Track Count",
+        data: tempos,
+        backgroundColor: "#308f81"
+      }],
+      labels: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
+    },
+    options: {
+      legend: {
+        display: false
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            precision: 0
+          }
+        }]
+      }
+    }
+  })
+  var moodChart = new Chart("mood", {
+    type: 'radar',
+    data: {
+      labels: ["Danceability", "Energy", "Acousticness", "Instrumentalness", "Liveness", "Valence", "Speechiness"],
+      datasets: [{
+        backgroundColor: "rgba(48, 143, 129, 0.1)",
+        borderColor: "#308f81",
+        borderJoinStyle: "round",
+        data: [features.danceability, features.energy, features.acousticness, features.instrumentalness, features.liveness, features.valence, features.speechiness]
+      }]
+    },
+    options: {
+      legend: {
+        display: false
+      },
+      scale: {
+        ticks: {
+          suggestedMax: 100,
+          suggestedMin: 0
+        }
+      }
+    }
+  })
+  var modeChart = new Chart("mode", {
+    type: 'pie',
+    data: {
+      labels: ["Minor", "Major"],
+      datasets: [{
+        backgroundColor: ["#308f81", "#8f303e"],
+        data: [minorMode, majorMode]
+      }]
+    },
+    options: {
+    }
+  })
+</script>

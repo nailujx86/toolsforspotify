@@ -1,0 +1,8 @@
+<h1>
+  Hi!
+</h1>
+{{#unless loggedIn}}
+<a class="b primary" onclick="login()">LOGIN</a>
+{{else}}
+<a class="b primary" href="/logout">LOGOUT</a>
+{{/unless}}
