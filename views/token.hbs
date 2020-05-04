@@ -1,0 +1,29 @@
+<h1>
+  Token
+</h1>
+<hr>
+<h2>
+  Generated Token
+</h2>
+<p>
+  <input class="full" style="text-align: center;" type="text" value="{{#if data.token}}
+  {{data.token}}
+  {{else}}
+  No token available yet. Please retrieve one using the button below!
+  {{/if}}" readonly>
+</p>
+<a class="b primary" onclick="login()">Retrieve new Token</a>
+<hr>
+<h2>
+  Usage
+</h2>
+<p>
+  You can supply a token to not have to authenticate via set cookies. This can be useful if you want to use the API in an embedded context.
+</p>
+<p>
+  Supply the token as an URI Query Parameter named token. In this case you'd write it as such:
+  <pre><code>[url]?token={{#if data.token}}{{data.token}}{{else}}...{{/if}}</code></pre>
+</p>
+<hr>
+<br>
+<a class="b primary" href="/">Go back</a>
