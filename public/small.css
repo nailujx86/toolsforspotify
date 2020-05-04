@@ -107,6 +107,9 @@ pre {
     border-left-width: 2px;
     padding-left: 1em;
 }
+code {
+    background: #dcdcdc
+}
 .center {
     text-align: center;
     vertical-align: middle;

@@ -16,12 +16,14 @@ Hi {{data.username}}!<br>
   <li>General
     <ol>
       <li><a href="#query">Query Structure</a></li>
-      <li><a href="#export">Destination Types</a></li>
+      <li><a href="#export">Destinations</a></li>
       <li><a href="#playlist">Playlist Types</a></li>
     </ol>
   </li>
+  <li><a href="#authentication">Authentication</a></li>
   <li><a href="#backup">Backup</a></li>
   <li><a href="#analyze">Analyze</a></li> 
+  <li><a href="#query">Query Parameters</a></li>
 </ol>
 <hr>
 <h3>General</h3>
@@ -36,3 +38,48 @@ Hi {{data.username}}!<br>
   Query Format:
   <pre><code>{{data.host}}/:action/:destination/:playlist</code></pre>
 </p>
+<h4 id="export">Destination Types</h4>
+<p>
+  The Destination type defines the data-type an action should return.<br>
+  A destination supported by all actions is the <code>json</code> and the <code>csv</code> Datatype. Action specific Destination types are listed below:
+  <ul>
+    <li>Backup
+      <ul>
+        <code>spotify</code>:<br>
+        The Spotify destination type sends the output to a new Spotify Playlist, effectively cloning the supplied playlist.
+      </ul>
+    </li>
+    <li>Analyze
+      <ul>
+        <code>charts</code>:<br>
+        The Charts destination type displays a page with multiple charts representing the playlist itself.
+      </ul>
+    </li>
+  </ul>
+</p>
+<h4 id="playlist">Playlist Types</h4>
+<p>
+  There are three types of arguments you can supply to the playlist part of a query.<br>
+  These are:
+  <ol>
+    <li><code>recent</code>:<br>
+    Uses your 50 most recently played songs.
+    </li>
+    <li><code>saved</code>:<br>
+    Uses your "liked/saved" songs.
+    </li>
+    <li><code>:playlist_id</code>:
+    Uses the Spotify Playlist with the said id.</li>
+  </ol>
+</p>
+<hr>
+<h3 id="authentication">Authentication</h3>
+
+<hr>
+<h3 id="backup">Backup</h3>
+<p>The Backup Action of toolsforspotify collects the songs from the supplied playlist and depending on the destination type creates a new playlist or returns them in a file format.</p>
+<hr>
+<h3 id="analyze">Analyze</h3>
+<p>The Analyze Action analyzes the tracks on specific audio features like dancability, tempo, mode or acousticness and returns them in the requested format.</p>
+<hr id="query">
+<h3>Query Parameters</h3>
