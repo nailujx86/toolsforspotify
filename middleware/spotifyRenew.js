@@ -2,10 +2,11 @@ const SpotifyWebApi = require('spotify-web-api-node');
 
 module.exports = (req, res, next) => {
   res.locals.loggedIn = false;
-  if(req.cookies && req.cookies['access_token'] && req.cookies['user_id']) {
+  if(req.cookies && req.cookies['access_token'] && req.cookies['user_id'] && req.cookies['user_name']) {
     res.locals.loggedIn = true;
     return next();
-  } else if(req.cookies && req.cookies['refresh_token']) {
+  } else if(req.cookies && req.cookies['refresh_token'] || req.query.token) {
+    req.cookies['refresh_token'] = req.cookies['refresh_token'] || req.query.token;
     var spotifyUserApi = new SpotifyWebApi({
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
@@ -27,6 +28,20 @@ module.exports = (req, res, next) => {
         res.cookie("user_id", req.cookies['user_id'], {maxAge: 365*24*60*60*1000}); // Refresh User ID Cookie
       } else {
         res.locals.loggedIn = false; // We need the User ID
+      }
+      if(!req.cookies['user_id'] || !req.cookies['user_name']) {
+        spotifyUserApi.setAccessToken(access_token);
+        return spotifyUserApi.getMe();
+      }
+      return Promise.resolve();
+    })
+    .then((info) => {
+      if(info != undefined) {
+        res.cookie("user_name", info.body.display_name, {maxAge: 365*24*60*60*1000});
+        res.cookie("user_id", info.body.id, {maxAge: 365*24*60*60*1000});
+        req.cookies['user_id'] = info.body.id;
+        req.cookies['user_name'] = info.body.display_name;
+        res.locals.loggedIn = true;
       }
       return next();
     })
