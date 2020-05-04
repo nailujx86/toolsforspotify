@@ -5,5 +5,6 @@ COPY package*.json ./
 USER node
 RUN npm install
 COPY --chown=node:node . .
+ENV PORT 8080
 EXPOSE 8080
 CMD ["npm", "start"]

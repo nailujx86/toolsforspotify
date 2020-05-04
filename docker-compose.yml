@@ -3,8 +3,6 @@ services:
   web:
     build: .
     image: nailuj/toolsforspotify
-    environment: 
-      - PORT=8080
     env_file:
       - ".env"
     ports:
