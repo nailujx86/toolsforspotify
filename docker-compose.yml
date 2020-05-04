@@ -1,6 +1,6 @@
 version: '3'
 services:
-  web:
+  frontend:
     build: .
     image: nailuj/toolsforspotify
     env_file:
