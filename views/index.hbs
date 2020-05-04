@@ -1,8 +1,38 @@
 <h1>
-  Hi!
+  Tools for Spotify
 </h1>
 {{#unless loggedIn}}
 <a class="b primary" onclick="login()">LOGIN</a>
 {{else}}
+Hi {{data.username}}!<br>
 <a class="b primary" href="/logout">LOGOUT</a>
 {{/unless}}
+<hr>
+<h2>
+  Documentation
+</h2>
+<h3>Index</h3>
+<ol>
+  <li>General
+    <ol>
+      <li><a href="#query">Query Structure</a></li>
+      <li><a href="#export">Destination Types</a></li>
+      <li><a href="#playlist">Playlist Types</a></li>
+    </ol>
+  </li>
+  <li><a href="#backup">Backup</a></li>
+  <li><a href="#analyze">Analyze</a></li> 
+</ol>
+<hr>
+<h3>General</h3>
+<h4 id="query">Query Structure</h4>
+<p>
+  A query usually consists out of three parts:<br>
+  <ol>
+  <li>The first part of a query is the action the API should perform, e.g. backup a playlist or analyze a playlist.</li>
+  <li>The second part of a query is the destination where the result should be put. This could be a json or a csv file for example.</li>
+  <li>The third part of a query is the id of a playlist or a special keyword that identifies a playlist. More regarding that can be found in the section <a href="#playlist">Playlist Types</a>.</li>
+  </ol>
+  Query Format:
+  <pre><code>{{data.host}}/:action/:destination/:playlist</code></pre>
+</p>
