@@ -5,7 +5,3 @@ services:
     image: toolsforspotify
     ports:
       - "8080:8080"
-    deploy:
-      replicas: 3
-      restart_policy:
-        condition: on-failure
