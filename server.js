@@ -115,105 +115,7 @@ app.get('/test', requiresLogin, (req, res, next) => {
   }
 })
 
-app.get('/:p(backup|analyze)/*/recent', requiresLogin, (req, res, next) => {
-  var spotifyUserApi = new SpotifyWebApi({
-    accessToken: req.cookies['access_token']
-  })
-  var tracks = [];
-  var maxItem = req.query.limit || 50;
-  if(maxItem > 50) {
-    maxItem = 50;
-  }
-  spotifyUserApi.getMyRecentlyPlayedTracks({limit: maxItem})
-  .then(data => {
-    var trackList = [];
-    for(var track of data.body.items) {
-      if(track.track.id) {
-        trackList.push({track: {name: track.track.name, artists: track.track.artists.map(i => i.name).join(", "), uri: track.track.uri}});
-      }
-    }
-    if(!(req.query.reverse == "false"))
-      trackList.reverse(); // reversing by default due to the recent tracks being bottom up
-    res.playlistData = {name: "Recent", tracks: trackList};
-    return next();
-  })
-  .catch(err => {
-    return next(err);
-  })
-});
-
-app.get('/:p(backup|analyze)/*/saved', requiresLogin, (req, res, next) => {
-  var spotifyUserApi = new SpotifyWebApi({
-    accessToken: req.cookies['access_token']
-  })
-  var tracks = [];
-  var steps = 50;
-  var maxItem = req.query.limit || 50;
-  if(req.query.limit > 2500) {
-    maxItem = 2500;
-  }
-  var total = 0;
-  var count = Math.ceil(maxItem / steps);
-  var trackList = [];
-  [...Array(count)].reduce((p, _) => 
-    p.then(_ =>
-      spotifyUserApi.getMySavedTracks({offset: total, limit: steps}).then(data => {
-        total += steps;
-        data.body.items.forEach(t => trackList.push({track: {name: t.track.name, artists: t.track.artists.map(i => i.name).join(", "), uri: t.track.uri}}));
-      })
-    )
-  , Promise.resolve())
-  .then(() => {
-    if(req.query.reverse == "true")
-      trackList.reverse();
-    res.playlistData = {name: "Saved Tracks", tracks: trackList};
-    return next();
-  })
-  .catch(err => {
-    return next(err);
-  })
-});
-
-app.get('/:p(backup|analyze)/*/:playlist', requiresLogin, (req, res, next) => {
-  if(["recent", "saved"].includes(req.params.playlist))
-    return next();
-  
-  var spotifyUserApi = new SpotifyWebApi({
-    accessToken: req.cookies['access_token']
-  });
-  var steps = 100;
-  var maxItem = Number(req.query.limit) || -1;
-  var total = 0;
-  var playlistID = req.params.playlist;
-  var tracks = [];
-  var name = "Playlist";
-  spotifyUserApi.getPlaylist(playlistID, {fields: "tracks.total, name"})
-  .then(function(data) {
-    if(maxItem > data.body.tracks.total || maxItem < 0) {
-      maxItem = data.body.tracks.total
-    }
-    if(maxItem < steps) {
-      steps = maxItem;
-    }
-    name = data.body.name || name;
-    var count = Math.ceil(maxItem/steps);
-    [...Array(count)].reduce((p, _) => // Sorry for sorcery
-      p.then(_ =>
-        spotifyUserApi.getPlaylistTracks(playlistID, {fields: "items(track(name,uri,artists))", offset: total, limit: steps}).then(data => {
-          total += steps;
-          data.body.items.forEach(i => i.track.artists = i.track.artists.map(i => i.name).join(", "));
-          tracks.push(...data.body.items);
-        })
-      )
-    , Promise.resolve())
-    .then(() => {
-      if(req.query.reverse == "true")
-        tracks.reverse();
-      res.playlistData = {name: name, tracks: tracks};
-      return next();
-    })
-  });
-});
+app.use('/:p(backup|analyze)', require('./middleware/playlistLoader'));
 
 app.get('/backup/spotify/:playlist', requiresLogin, (req, res, next) => {
   var spotifyUserApi = new SpotifyWebApi({
@@ -260,43 +162,7 @@ app.get('/backup/csv/:playlist', requiresLogin, (req, res, next) => {
   return res.end(output);
 });
 
-app.get('/analyze/*/:playlist', requiresLogin, (req, res, next) => {
-  var spotifyUserApi = new SpotifyWebApi({
-    accessToken: req.cookies['access_token']
-  });
-  var ids = [];
-  ids = res.playlistData.tracks.map(t => t.track.uri.startsWith("spotify:track:") ? t.track.uri.replace("spotify:track:", "") : null).filter(t => t != null);
-  var count = Math.ceil(ids.length / 100);
-  var total = 0;
-  var trackInfos = [];
-  [...Array(count)].reduce((p, _) =>
-    p.then(_ =>
-      spotifyUserApi.getAudioFeaturesForTracks(ids.slice(total, total + 100)).then(data => {
-        total += 100;
-        trackInfos.push(...data.body.audio_features);
-      })
-    )
-  , Promise.resolve())
-  .then(() => {
-    res.trackInfoData = trackInfos;
-    return next();
-  })
-  .catch((err) => {
-    return next(err);
-  })
-});
-
-app.get('/analyze/json/:playlist', requiresLogin, (req, res, next) => {
-  res.set('Content-Disposition', 'inline;filename="' + res.playlistData.name + '_analysis.json"')
-  res.set('Content-Type', 'application/json');
-  return res.json(res.trackInfoData);
-});
-
-app.get('/analyze/charts/:playlist', requiresLogin, (req, res, next) => {
-  res.locals.meta.title = "\"" + res.playlistData.name + "\" Analysis";
-  res.locals.data = JSON.stringify(res.trackInfoData);
-  res.render("analysis");
-})
+app.use("/analyze", require('./routes/analyze'));
 
 app.get("/logout", (req, res) => {
   res.clearCookie("access_token");
