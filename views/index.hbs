@@ -22,8 +22,8 @@ Hi {{data.username}}!<br>
   </li>
   <li><a href="#authentication">Authentication</a></li>
   <li><a href="#backup">Backup</a></li>
-  <li><a href="#analyze">Analyze</a></li> 
-  <li><a href="#query">Query Parameters</a></li>
+  <li><a href="#analyze">Analyze</a></li>
+  <li><a href="#params">Query Parameters</a></li>
 </ol>
 <hr>
 <h3>General</h3>
@@ -31,9 +31,12 @@ Hi {{data.username}}!<br>
 <p>
   A query usually consists out of three parts:<br>
   <ol>
-  <li>The first part of a query is the action the API should perform, e.g. backup a playlist or analyze a playlist.</li>
-  <li>The second part of a query is the destination where the result should be put. This could be a json or a csv file for example.</li>
-  <li>The third part of a query is the id of a playlist or a special keyword that identifies a playlist. More regarding that can be found in the section <a href="#playlist">Playlist Types</a>.</li>
+    <li>The first part of a query is the action the API should perform, e.g. backup a playlist or analyze a playlist.
+    </li>
+    <li>The second part of a query is the destination where the result should be put. This could be a json or a csv file
+      for example.</li>
+    <li>The third part of a query is the id of a playlist or a special keyword that identifies a playlist. More
+      regarding that can be found in the section <a href="#playlist">Playlist Types</a>.</li>
   </ol>
   Query Format:
   <pre><code>{{data.host}}/:action/:destination/:playlist</code></pre>
@@ -41,12 +44,14 @@ Hi {{data.username}}!<br>
 <h4 id="export">Destination Types</h4>
 <p>
   The Destination type defines the data-type an action should return.<br>
-  A destination supported by all actions is the <code>json</code> and the <code>csv</code> Datatype. Action specific Destination types are listed below:
+  A destination supported by all actions is the <code>json</code> and the <code>csv</code> Datatype. Action specific
+  Destination types are listed below:
   <ul>
     <li>Backup
       <ul>
         <code>spotify</code>:<br>
-        The Spotify destination type sends the output to a new Spotify Playlist, effectively cloning the supplied playlist.
+        The Spotify destination type sends the output to a new Spotify Playlist, effectively cloning the supplied
+        playlist.
       </ul>
     </li>
     <li>Analyze
@@ -63,23 +68,55 @@ Hi {{data.username}}!<br>
   These are:
   <ol>
     <li><code>recent</code>:<br>
-    Uses your 50 most recently played songs.
+      Uses your 50 most recently played songs.
     </li>
     <li><code>saved</code>:<br>
-    Uses your "liked/saved" songs.
+      Uses your "liked/saved" songs.
     </li>
     <li><code>:playlist_id</code>:
-    Uses the Spotify Playlist with the said id.</li>
+      Uses the Spotify Playlist with the said id.</li>
   </ol>
 </p>
 <hr>
 <h3 id="authentication">Authentication</h3>
-
+<p>
+  There are two ways to provide authentication:
+  <ol>
+    <li>
+      Authenticating via the Log-In Button on this page or below:<br>
+      {{#unless loggedIn}}
+      <a class="b primary" onclick="login()">LOGIN</a>
+      {{else}}
+      You are already logged in!
+      {{/unless}}
+      <br><br>
+      The authentication is stored in your browsers cookies and is renewed automatically if it expires.
+    </li><br>
+    <li>
+      Supplying a token via the query parameter <code>token</code>.<br>
+      This can be useful if you're in an
+      environment where you are not able to store cookies locally for example in an embedded context.
+      You can generate a token/view your token at <a href="/token">{{data.host}}/token</a>.
+    </li>
+  </ol>
+</p>
 <hr>
 <h3 id="backup">Backup</h3>
-<p>The Backup Action of toolsforspotify collects the songs from the supplied playlist and depending on the destination type creates a new playlist or returns them in a file format.</p>
+<p>The Backup Action of toolsforspotify collects the songs from the supplied playlist and depending on the destination
+  type creates a new playlist or returns them in a file format.</p>
 <hr>
 <h3 id="analyze">Analyze</h3>
-<p>The Analyze Action analyzes the tracks on specific audio features like dancability, tempo, mode or acousticness and returns them in the requested format.</p>
-<hr id="query">
-<h3>Query Parameters</h3>
+<p>The Analyze Action analyzes the tracks on specific audio features like dancability, tempo, mode or acousticness and
+  returns them in the requested format.</p>
+<hr>
+<h3 id="params">Query Parameters</h3>
+<h4><code>token</code></h4>
+<p>Used to authenticate without having to use cookies</p>
+<h4><code>limit</code></h4>
+<p>Used to define the maximum amount of retrieved tracks.<br>
+Default: 50
+Max: 2500</p>
+<h4><code>reverse</code></h4>
+<p>Reverses the track order.<br>
+Default: false
+</p>

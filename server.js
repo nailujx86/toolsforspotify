@@ -19,6 +19,7 @@ app.use(require('./middleware/showUsername'));
 
 /* ROUTES */
 app.get("/", (req, res) => {
+  res.locals.data.host = process.env.HOSTURL;
   res.render("index");
 });
 
