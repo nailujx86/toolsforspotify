@@ -3,6 +3,8 @@ var router = express.Router();
 const SpotifyWebApi = require('spotify-web-api-node');
 const requiresLogin = require('../middleware/requiresLogin');
 
+router.use(require('../middleware/playlistLoader'));
+
 router.get('/spotify/:playlist', requiresLogin, (req, res, next) => {
   var spotifyUserApi = new SpotifyWebApi({
     accessToken: req.cookies['access_token']
