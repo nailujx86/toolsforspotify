@@ -3,7 +3,12 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const requiresLogin = require('../middleware/requiresLogin');
 var router = express.Router();
 
+let base62test = /^[A-Za-z0-9]+$/;
+
 router.get('/*/recent', requiresLogin, (req, res, next) => {
+  if(res.playlistData)
+    return next();
+
   var spotifyUserApi = new SpotifyWebApi({
     accessToken: req.cookies['access_token']
   })
@@ -31,6 +36,9 @@ router.get('/*/recent', requiresLogin, (req, res, next) => {
 });
 
 router.get('/*/saved', requiresLogin, (req, res, next) => {
+  if(res.playlistData)
+    return next();
+
   var spotifyUserApi = new SpotifyWebApi({
     accessToken: req.cookies['access_token']
   })
@@ -63,8 +71,16 @@ router.get('/*/saved', requiresLogin, (req, res, next) => {
 });
 
 router.get('/*/:playlist', requiresLogin, (req, res, next) => {
+  if(res.playlistData)
+    return next();
+
   if (["recent", "saved"].includes(req.params.playlist))
     return next();
+  if (!base62test.test(req.params.playlist)) {
+    var error = new Error("Invalid playlist ID");
+    error.status = 500;
+    return next(error);
+  }
 
   var spotifyUserApi = new SpotifyWebApi({
     accessToken: req.cookies['access_token']
@@ -100,6 +116,11 @@ router.get('/*/:playlist', requiresLogin, (req, res, next) => {
           res.playlistData = { name: name, tracks: tracks };
           return next();
         })
+    })
+    .catch(err => {
+      var error = new Error("Playlist not found!");
+      error.status = 400;
+      return next(error);
     });
 });
 
