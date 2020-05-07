@@ -1,9 +1,11 @@
 on: 
  pull_request:
-  types: [closed] 
+  types: [closed]
+ push:
+  branches: 
+   - master
 jobs:
   repo-sync:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - name: repo-sync
