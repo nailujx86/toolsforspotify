@@ -17,6 +17,11 @@ app.use(require('./middleware/populateResLocal'));
 app.use(require('./middleware/spotifyRenew'));
 app.use(require('./middleware/showUsername'));
 
+app.use((req, res, next) => {
+  res.locals.data.startTime = new Date().getTime();
+  return next();
+});
+
 /* ROUTES */
 app.get("/", (req, res) => {
   res.locals.data.host = process.env.HOSTURL;
@@ -30,6 +35,7 @@ app.use('/:p(backup|analyze)', require('./middleware/playlistLoader'));
 
 app.use("/backup", require('./routes/backup'));
 app.use("/analyze", require('./routes/analyze'));
+app.use("/generate", require('./routes/generate'));
 
 app.use("/token", require('./routes/token'));
 
@@ -56,7 +62,6 @@ app.use((err, req, res, next) => {
   res.locals.meta.title = "Error - " + err.status;
   res.locals.showLoginButton = err.showLoginButton || false;
   res.status(err.status || 500);
-  console.log(err);
   res.render('error');
 })
 /* End error handling */
