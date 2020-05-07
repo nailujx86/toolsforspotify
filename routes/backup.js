@@ -25,7 +25,9 @@ router.get('/spotify/:playlist', requiresLogin, (req, res, next) => {
         )
         , Promise.resolve())
         .then(() => {
-          return res.redirect(playlistURL);
+          res.locals.data.elapsedTime = (new Date().getTime() - res.locals.data.startTime) / 1000;
+          res.locals.data.redirectURL = playlistURL;
+          return res.render("playlistready");
         })
         .catch(err => {
           return next(err);
