@@ -46,7 +46,7 @@ router.get('/csv/:playlist', requiresLogin, (req, res, next) => {
   res.set('Content-Type', 'text/csv')
   res.set('Content-Disposition', 'attachment;filename="' + res.playlistData.name + '.csv"')
   var output = "Name\n" + res.playlistData.name + "\nTrackname;Artists;URI\n";
-  output += res.playlistData.tracks.map(t => t.track.name + ";" + t.track.artists + ";" + t.track.uri).join("\n");
+  output += res.playlistData.tracks.map(t => t.track.name + ";" + t.track.artists.map(i => i.name).join(", ") + ";" + t.track.uri).join("\n");
   return res.end(output);
 });
 

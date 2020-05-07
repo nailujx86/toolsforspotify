@@ -22,11 +22,11 @@ router.get('/*/recent', requiresLogin, (req, res, next) => {
       var trackList = [];
       for (var track of data.body.items) {
         if (track.track.id) {
-          trackList.push({ track: { name: track.track.name, artists: track.track.artists.map(i => i.name).join(", "), uri: track.track.uri } });
+          trackList.push({ track: { name: track.track.name, artists: track.track.artists.map(i => {return {name: i.name, id: i.id}}), uri: track.track.uri } });
         }
       }
-      if (!(req.query.reverse == "false"))
-        trackList.reverse(); // reversing by default due to the recent tracks being bottom up
+      if (req.query.reverse == "true")
+        trackList.reverse();
       res.playlistData = { name: "Recent", tracks: trackList };
       return next();
     })
@@ -55,7 +55,7 @@ router.get('/*/saved', requiresLogin, (req, res, next) => {
     p.then(_ =>
       spotifyUserApi.getMySavedTracks({ offset: total, limit: steps }).then(data => {
         total += steps;
-        data.body.items.forEach(t => trackList.push({ track: { name: t.track.name, artists: t.track.artists.map(i => i.name).join(", "), uri: t.track.uri } }));
+        data.body.items.forEach(t => trackList.push({ track: { name: t.track.name, artists: t.track.artists.map(i => {return {name: i.name, id: i.id}}), uri: t.track.uri } }));
       })
     )
     , Promise.resolve())
@@ -105,7 +105,7 @@ router.get('/*/:playlist', requiresLogin, (req, res, next) => {
         p.then(_ =>
           spotifyUserApi.getPlaylistTracks(playlistID, { fields: "items(track(name,uri,artists))", offset: total, limit: steps }).then(data => {
             total += steps;
-            data.body.items.forEach(i => i.track.artists = i.track.artists.map(i => i.name).join(", "));
+            data.body.items.forEach(i => i.track.artists = i.track.artists.map(i => {return {name: i.name, id: i.id}}));
             tracks.push(...data.body.items);
           })
         )
