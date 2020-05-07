@@ -132,6 +132,7 @@ router.all('/*/:playlist', requiresLogin, (req, res, next) => {
       }
     }
   }
+  return next();
 });
 
 
