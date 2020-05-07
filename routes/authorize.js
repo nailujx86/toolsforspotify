@@ -14,7 +14,7 @@ router.get('', (req, res) => {
   if (req.query.modern && req.query.modern == 'true') {
     res.cookie("modernLogin", true);
   }
-  res.cookie("state", state, { signed: true });
+  res.cookie("state", state, { signed: true , httpOnly: true });
   var authURL = spotifyApi.createAuthorizeURL(scopes, state, true);
   res.redirect(authURL);
 });

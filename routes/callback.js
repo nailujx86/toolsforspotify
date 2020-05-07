@@ -19,15 +19,15 @@ router.get('', (req, res, next) => {
         let refresh_token = data.body.refresh_token;
         let expiry = data.body.expires_in;
 
-        res.cookie("refresh_token", refresh_token, { maxAge: 365 * 24 * 60 * 60 * 1000 });
-        res.cookie("access_token", access_token, { maxAge: Number(expiry) * 1000 });
+        res.cookie("refresh_token", refresh_token, { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true });
+        res.cookie("access_token", access_token, { maxAge: Number(expiry) * 1000, httpOnly: true });
 
         spotifyUserApi.setAccessToken(access_token);
         return spotifyUserApi.getMe();
       })
       .then((info) => {
-        res.cookie("user_name", info.body.display_name, { maxAge: 365 * 24 * 60 * 60 * 1000 });
-        res.cookie("user_id", info.body.id, { maxAge: 365 * 24 * 60 * 60 * 1000 });
+        res.cookie("user_name", info.body.display_name, { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true });
+        res.cookie("user_id", info.body.id, { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true });
         if (req.cookies['modernLogin'] == 'true') {
           res.clearCookie("modernLogin");
           res.send("<script type='text/javascript'>window.close();</script>")

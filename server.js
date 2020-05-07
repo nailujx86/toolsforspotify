@@ -2,13 +2,16 @@ require('dotenv').config()
 const express = require("express");
 const exphbs = require('express-handlebars');
 const cookieParser = require("cookie-parser");
-const debug = process.env.DEBUG || true;
 const app = express();
 
 var hbs = exphbs.create({ defaultLayout: 'main', extname: 'hbs' });
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
-if(!debug) {
+if(process.env.NODE_ENV == "production") {
+  const compression = require('compression');
+  const helmet = require('helmet')
+  app.use(helmet())
+  app.use(compression());
   app.enable('view cache');
 }
 app.use(cookieParser(process.env.COOKIE_SECRET));
