@@ -6,7 +6,7 @@ var router = express.Router();
 let base62test = /^[A-Za-z0-9]+$/;
 
 router.get('/*/recent', requiresLogin, (req, res, next) => {
-  if(res.playlistData)
+  if (res.playlistData)
     return next();
 
   var spotifyUserApi = new SpotifyWebApi({
@@ -22,11 +22,9 @@ router.get('/*/recent', requiresLogin, (req, res, next) => {
       var trackList = [];
       for (var track of data.body.items) {
         if (track.track.id) {
-          trackList.push({ track: { name: track.track.name, artists: track.track.artists.map(i => {return {name: i.name, id: i.id}}), uri: track.track.uri } });
+          trackList.push({ track: { name: track.track.name, artists: track.track.artists.map(i => { return { name: i.name, id: i.id } }), uri: track.track.uri } });
         }
       }
-      if (req.query.reverse == "true")
-        trackList.reverse();
       res.playlistData = { name: "Recent", tracks: trackList };
       return next();
     })
@@ -36,7 +34,7 @@ router.get('/*/recent', requiresLogin, (req, res, next) => {
 });
 
 router.get('/*/saved', requiresLogin, (req, res, next) => {
-  if(res.playlistData)
+  if (res.playlistData)
     return next();
 
   var spotifyUserApi = new SpotifyWebApi({
@@ -48,6 +46,9 @@ router.get('/*/saved', requiresLogin, (req, res, next) => {
   if (req.query.limit > 2500) {
     maxItem = 2500;
   }
+  if (maxItem < steps) {
+    steps = maxItem;
+  }
   var total = 0;
   var count = Math.ceil(maxItem / steps);
   var trackList = [];
@@ -55,13 +56,11 @@ router.get('/*/saved', requiresLogin, (req, res, next) => {
     p.then(_ =>
       spotifyUserApi.getMySavedTracks({ offset: total, limit: steps }).then(data => {
         total += steps;
-        data.body.items.forEach(t => trackList.push({ track: { name: t.track.name, artists: t.track.artists.map(i => {return {name: i.name, id: i.id}}), uri: t.track.uri } }));
+        data.body.items.forEach(t => trackList.push({ track: { name: t.track.name, artists: t.track.artists.map(i => { return { name: i.name, id: i.id } }), uri: t.track.uri } }));
       })
     )
     , Promise.resolve())
     .then(() => {
-      if (req.query.reverse == "true")
-        trackList.reverse();
       res.playlistData = { name: "Saved Tracks", tracks: trackList };
       return next();
     })
@@ -71,7 +70,7 @@ router.get('/*/saved', requiresLogin, (req, res, next) => {
 });
 
 router.get('/*/:playlist', requiresLogin, (req, res, next) => {
-  if(res.playlistData)
+  if (res.playlistData)
     return next();
 
   if (["recent", "saved"].includes(req.params.playlist))
@@ -105,14 +104,12 @@ router.get('/*/:playlist', requiresLogin, (req, res, next) => {
         p.then(_ =>
           spotifyUserApi.getPlaylistTracks(playlistID, { fields: "items(track(name,uri,artists))", offset: total, limit: steps }).then(data => {
             total += steps;
-            data.body.items.forEach(i => i.track.artists = i.track.artists.map(i => {return {name: i.name, id: i.id}}));
+            data.body.items.forEach(i => i.track.artists = i.track.artists.map(i => { return { name: i.name, id: i.id } }));
             tracks.push(...data.body.items);
           })
         )
         , Promise.resolve())
         .then(() => {
-          if (req.query.reverse == "true")
-            tracks.reverse();
           res.playlistData = { name: name, tracks: tracks };
           return next();
         })
@@ -122,6 +119,19 @@ router.get('/*/:playlist', requiresLogin, (req, res, next) => {
       error.status = 400;
       return next(error);
     });
+});
+
+router.all('/*/:playlist', requiresLogin, (req, res, next) => {
+  if (res.playlistData) {
+    if (req.query.reverse == "true")
+      res.playlist.tracks.reverse();
+    if (req.query.shuffle == "true") {
+      for (let i = res.playlist.tracks.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [res.playlist.tracks[i], res.playlist.tracks[j]] = [res.playlist.tracks[j], res.playlist.tracks[i]];
+      }
+    }
+  }
 });
 
 
