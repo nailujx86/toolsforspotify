@@ -23,20 +23,18 @@ Hi {{data.username}}!<br>
   <li><a href="#authentication">Authentication</a></li>
   <li><a href="#backup">Backup</a></li>
   <li><a href="#analyze">Analyze</a></li>
+  <li><a href="#generate">Generate</a></li>
   <li><a href="#params">Query Parameters</a></li>
 </ol>
 <hr>
 <h3>General</h3>
 <h4 id="query">Query Structure</h4>
 <p>
-  A query usually consists out of three parts:<br>
+  A query consists out of three parts:<br>
   <ol>
-    <li>The first part of a query is the action the API should perform, e.g. backup a playlist or analyze a playlist.
-    </li>
-    <li>The second part of a query is the destination where the result should be put. This could be a json or a csv file
-      for example.</li>
-    <li>The third part of a query is the id of a playlist or a special keyword that identifies a playlist. More
-      regarding that can be found in the section <a href="#playlist">Playlist Types</a>.</li>
+    <li>Action (Backup, Analyze etc.).</li>
+    <li>Destination (Spotify, JSON, CSV)</li>
+    <li>Playlist Identifier. See more at <a href="#playlist">Playlist Types</a>.</li>
   </ol>
   Query Format:
   <pre><code>{{data.host}}/:action/:destination/:playlist</code></pre>
@@ -44,14 +42,27 @@ Hi {{data.username}}!<br>
 <h4 id="export">Destination Types</h4>
 <p>
   The Destination type defines the data-type an action should return.<br>
-  A destination supported by all actions is the <code>json</code> and the <code>csv</code> Datatype. Action specific
-  Destination types are listed below:
+  Destinations supported by <i>all</i> actions:
+  <ul>
+    <li>
+      <code>json</code>
+    </li>
+    <li>
+      <code>csv</code>
+    </li>
+  </ul>
+  Action specific Destination types:
   <ul>
     <li>Backup
       <ul>
         <code>spotify</code>:<br>
-        The Spotify destination type sends the output to a new Spotify Playlist, effectively cloning the supplied
-        playlist.
+        Creates a new private playlist from the read Tracks.
+      </ul>
+    </li>
+    <li>Generate
+      <ul>
+        <code>spotify</code>:<br>
+        Creates a new private playlist from the generated Tracks.
       </ul>
     </li>
     <li>Analyze
@@ -73,8 +84,8 @@ Hi {{data.username}}!<br>
     <li><code>saved</code>:<br>
       Uses your "liked/saved" songs.
     </li>
-    <li><code>:playlist_id</code>:
-      Uses the Spotify Playlist with the said id.</li>
+    <li><code>:playlist</code>:
+      Uses the Spotify Playlist with the said ID or URI. (e.g. <code>37i9dQZF1DWUKPeBypcpcP</code> or <code>spotify:playlist:37i9dQZF1DWUKPeBypcpcP</code>)</li>
   </ol>
 </p>
 <hr>
@@ -87,7 +98,7 @@ Hi {{data.username}}!<br>
       {{#unless loggedIn}}
       <a class="b primary" onclick="login()">LOGIN</a>
       {{else}}
-      You are already logged in!
+      <i>(You are already logged in)</i>
       {{/unless}}
       <br><br>
       The authentication is stored in your browsers cookies and is renewed automatically if it expires.
@@ -102,21 +113,34 @@ Hi {{data.username}}!<br>
 </p>
 <hr>
 <h3 id="backup">Backup</h3>
-<p>The Backup Action of toolsforspotify collects the songs from the supplied playlist and depending on the destination
+<p>Collects the songs from the supplied playlist and depending on the destination
   type creates a new playlist or returns them in a file format.</p>
 <hr>
 <h3 id="analyze">Analyze</h3>
-<p>The Analyze Action analyzes the tracks on specific audio features like dancability, tempo, mode or acousticness and
+<p>Analyzes the tracks on specific audio features like dancability, tempo, mode or acousticness and
   returns them in the requested format.</p>
+<hr>
+<h3 id="generate">Generate</h3>
+<p>Generates recommendations based on the supplied playlist. The amount of recommendations to generate is controlled by the query parameter <code>amount</code>.
+The amount defaults to 50 and the maximum amount of recommendations to generate is 1000.</p>
 <hr>
 <h3 id="params">Query Parameters</h3>
 <h4><code>token</code></h4>
-<p>Used to authenticate without having to use cookies</p>
+<p>Used to authenticate without cookies. For more Information see <a href="/token">Token</a>.</p>
 <h4><code>limit</code></h4>
 <p>Used to define the maximum amount of retrieved tracks.<br>
 Default: 50
 Max: 2500</p>
 <h4><code>reverse</code></h4>
 <p>Reverses the track order.<br>
+Default: false
+</p>
+<h4><code>shuffle</code></h4>
+<p>Shuffles your supplied playlist before further processing.<br>
+Default: false
+</p>
+<h4><code>unique</code></h4>
+<p>Removes duplicates.<br>
+Note: Can reduce playlist length significantly when used with the Generate action on outputs amounts higher than 100 songs.
 Default: false
 </p>
