@@ -126,8 +126,12 @@ router.get('/*/:playlist', requiresLogin, (req, res, next) => {
 
 router.all('/*/:playlist', requiresLogin, (req, res, next) => {
   if (res.playlistData) {
-    if (req.query.reverse == "true")
-      res.playlistData.tracks.reverse();
+    if(req.query.unique == "true") {
+      let indexArr = res.playlistData.tracks.map(i => i.track.uri);
+      res.playlistData.tracks = res.playlistData.tracks.filter((elem, pos) => {
+        return indexArr.indexOf(elem.track.uri) == pos;
+      });
+    }
     if (req.query.shuffle == "true") {
       for (let i = res.playlistData.tracks.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
