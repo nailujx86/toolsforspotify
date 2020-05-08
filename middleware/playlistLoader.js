@@ -75,6 +75,9 @@ router.get('/*/:playlist', requiresLogin, (req, res, next) => {
 
   if (["recent", "saved"].includes(req.params.playlist))
     return next();
+  if(req.params.playlist && req.params.playlist.startsWith("spotify:playlist:")) {
+    req.params.playlist = req.params.playlist.replace("spotify:playlist:", "");
+  }
   if (!base62test.test(req.params.playlist)) {
     var error = new Error("Invalid playlist ID");
     error.status = 500;
