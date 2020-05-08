@@ -127,13 +127,15 @@ router.get('/*/:playlist', requiresLogin, (req, res, next) => {
 router.all('/*/:playlist', requiresLogin, (req, res, next) => {
   if (res.playlistData) {
     if (req.query.reverse == "true")
-      res.playlist.tracks.reverse();
+      res.playlistData.tracks.reverse();
     if (req.query.shuffle == "true") {
-      for (let i = res.playlist.tracks.length - 1; i > 0; i--) {
+      for (let i = res.playlistData.tracks.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [res.playlist.tracks[i], res.playlist.tracks[j]] = [res.playlist.tracks[j], res.playlist.tracks[i]];
+        [res.playlistData.tracks[i], res.playlistData.tracks[j]] = [res.playlistData.tracks[j], res.playlistData.tracks[i]];
       }
     }
+    if(req.query.unique == "true")
+      res.playlistData.tracks = [...new Set(res.playlistData.tracks)];
   }
   return next();
 });

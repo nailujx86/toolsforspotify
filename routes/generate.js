@@ -67,6 +67,8 @@ router.all('/*/:playlist', requireLogin, (req, res, next) => {
     ).catch(err => {return next(err)})
     , Promise.resolve())
     .then(() => {
+      if(req.query.unique == "true")
+        res.recommendationData.tracks = [...new Set(res.recommendationData.tracks)];
       res.recommendationData = { name: "Recommendations from " + res.playlistData.name, tracks: trackList };
       return next();
     })
