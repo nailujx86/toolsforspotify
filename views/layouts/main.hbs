@@ -1,11 +1,31 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    {{> head}}
-  </head>
-  <body>
-    <div class="c">
-      {{{body}}}
-    </div>
-  </body>
+
+<head>
+  {{> head}}
+</head>
+
+<body>
+  <div class="c">
+    {{{body}}}
+  </div>
+  <script src="manup.min.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      if (navigator.serviceWorker.controller) {
+        console.log("[toolsforspotify] active service worker found, no need to register");
+      } else {
+        // Register the service worker
+        navigator.serviceWorker
+          .register("serviceworker.js", {
+            scope: "./"
+          })
+          .then(function (reg) {
+            console.log("[toolsforspotify] Service worker has been registered for scope: " + reg.scope);
+          });
+      }
+    }
+  </script>
+</body>
+
 </html>

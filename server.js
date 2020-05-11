@@ -28,6 +28,8 @@ app.use((req, res, next) => {
 /* ROUTES */
 app.get("/", require('./middleware/showUserPlaylists'), (req, res) => {
   res.locals.data.host = process.env.HOSTURL;
+  res.locals.meta.title = "toolsforspotify";
+  res.locals.meta.description = "A selection of tools for Spotify Playlists."
   if(res.userPlaylists)
     res.locals.data.playlists = res.userPlaylists;
   res.render("urlbuilder");
@@ -35,7 +37,18 @@ app.get("/", require('./middleware/showUserPlaylists'), (req, res) => {
 
 app.get("/documentation", (req, res) => {
   res.locals.data.host = process.env.HOSTURL;
+  res.locals.meta.title = "Documentation";
   res.render("documentation");
+});
+
+app.get("/manifest.json", (req, res) => {
+  res.locals.data.host = process.env.HOSTURL;
+  res.render("manifest", {layout: false});
+});
+
+app.get("/offline", (req, res) => {
+  res.locals.data.title = "Offline";
+  res.render("offline");
 });
 
 app.use('/authorize', require('./routes/authorize'));
