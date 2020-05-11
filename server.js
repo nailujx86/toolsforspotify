@@ -26,9 +26,16 @@ app.use((req, res, next) => {
 });
 
 /* ROUTES */
-app.get("/", (req, res) => {
+app.get("/", require('./middleware/showUserPlaylists'), (req, res) => {
   res.locals.data.host = process.env.HOSTURL;
-  res.render("index");
+  if(res.userPlaylists)
+    res.locals.data.playlists = res.userPlaylists;
+  res.render("urlbuilder");
+});
+
+app.get("/documentation", (req, res) => {
+  res.locals.data.host = process.env.HOSTURL;
+  res.render("documentation");
 });
 
 app.use('/authorize', require('./routes/authorize'));

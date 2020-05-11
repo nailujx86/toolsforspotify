@@ -1,0 +1,190 @@
+<h1>Tools for Spotify</h1>
+{{#unless loggedIn}}
+<a class="b primary" onclick="login()">LOGIN</a>
+{{else}}
+Hi {{data.username}}!<br>
+<a class="b primary" href="/logout">LOGOUT</a>
+{{/unless}}
+<hr>
+<h2>Get started</h2>
+<p>You can check out the documentation over at <a href="/documentation">{{data.host}}/documentation</a> or build your
+  own query using the Query Builder below.</p>
+<h2>Query Builder</h2>
+{{#unless loggedIn}}
+<p>You have to be logged in to use the Query Builder!</p>
+{{else}}
+<div class="r">
+  <div class="i">
+    <div class="card">
+      <div class="c">
+        <form id="builder_form">
+          <h3>Playlist</h3>
+          <label for="playlistid">Playlist ID</label><br>
+          <input id="playlistid" type="text" placeholder="Playlist Identifier" class="full" required><br>
+          <label for="playlistselection">Quick selection</label><br>
+          <select id="playlistselection" class="full">
+            <option value="">Custom 🔧</option>
+            <option value="saved">Saved 💾</option>
+            <option value="recent">Recent 🕐</option>
+            {{#each data.playlists}}
+            <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+          </select>
+          <hr>
+          <h3>Action</h3>
+          <input id="action_backup" type="radio" name="action" value="backup" onclick="actionClick(this)">
+          <label for="action_backup">Backup 💽</label>
+          <input id="action_analyze" type="radio" name="action" value="analyze" onclick="actionClick(this)">
+          <label for="action_analyze">Analyze 🔎</label>
+          <input id="action_generate" type="radio" name="action" value="generate" onclick="actionClick(this)">
+          <label for="action_generate">Generate 🧪</label>
+          <hr>
+          <h3>Destination</h3>
+          <input id="destination_json" type="radio" name="destination" value="json" onclick="destinationClick(this)">
+          <label for="destination_json">JSON 📑</label>
+          <input id="destination_csv" type="radio" name="destination" value="csv" onclick="destinationClick(this)">
+          <label for="destination_csv">CSV 📄</label>
+          <input id="destination_spotify" type="radio" name="destination" value="spotify"onclick="destinationClick(this)" disabled>
+          <label for="destination_spotify">Spotify 🎧</label>
+          <input id="destination_charts" type="radio" name="destination" value="charts" onclick="destinationClick(this)"
+            disabled>
+          <label for="destination_charts">Charts 📊</label>
+          <hr>
+          <h3>Options</h3>
+          <input type="checkbox" id="option_reverse" name="reverse" onclick="optionClick(this)">
+          <label for="option_reverse">Reverse input</label>
+          <input type="checkbox" id="option_shuffle" name="shuffle" onclick="optionClick(this)">
+          <label for="option_shuffle">Shuffle input</label>
+          <br>
+          <input type="checkbox" id="option_unique" name="unique" onclick="optionClick(this)">
+          <label for="option_unique">Remove duplicates from Output</label>
+          <br>
+          <label for="option_limit">Input Limit</label><br>
+          <input type="number" id="option_limit" name="limit" min="1" max="2500" placeholder="50"
+            oninput="optionInput(this)">
+          <br>
+          <label for="option_amount">Output Amount (for Action "generate")</label><br>
+          <input type="number" id="option_amount" name="amount" min="1" max="1000" placeholder="20"
+            oninput="optionInput(this)">
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="i">
+    <div class="card">
+      <div class="c">
+        <h3>Generated URL</h3>
+        <input id="generatedURL" class="full" style="text-align: center;" type="text"
+          value="{{data.host}}/:action/:destination/:playlist" readonly><br><br>
+        <button id="launch" class="b primary full washed" onclick="launch()" disabled>Launch! 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var host = "{{ data.host }}";
+    var playlistID = "";
+    var action = "";
+    var destination = "";
+    var queryParams = {};
+    document.getElementById("playlistselection").addEventListener("input", function () {
+      var selectionElement = document.getElementById("playlistselection");
+      var val = selectionElement.options[selectionElement.selectedIndex].value;
+      var idElement = document.getElementById("playlistid");
+      if (val != "") {
+        idElement.setAttribute("readonly", true);
+        idElement.classList.add("washed");
+      } else {
+        idElement.removeAttribute("readonly");
+        idElement.classList.remove("washed");
+      }
+      idElement.value = val;
+      playlistID = val;
+      updateURL();
+    });
+    document.getElementById("playlistid").addEventListener("input", function () {
+      var idElement = document.getElementById("playlistid");
+      var val = idElement.value;
+      playlistID = val;
+      updateURL();
+    });
+    function actionClick(radiobtn) {
+      action = radiobtn.value;
+      updateDestination();
+      updateURL();
+    }
+    function updateDestination() {
+      if (["generate", "backup"].indexOf(action) != -1) {
+        document.getElementById("destination_spotify").removeAttribute("disabled");
+      } else {
+        document.getElementById("destination_spotify").setAttribute("disabled", true);
+        if (destination == "spotify") {
+          destination = "";
+          document.getElementById("destination_spotify").checked = false;
+        }
+      }
+      if (action == "analyze") {
+        document.getElementById("destination_charts").removeAttribute("disabled");
+      } else {
+        document.getElementById("destination_charts").setAttribute("disabled", true);
+        if (destination == "charts") {
+          destination = "";
+          document.getElementById("destination_charts").checked = false;
+        }
+      }
+    }
+    function destinationClick(radiobtn) {
+      destination = radiobtn.value;
+      updateURL();
+    }
+    function optionClick(checkbox) {
+      val = checkbox.checked;
+      if (val == true) {
+        queryParams[checkbox.name] = true;
+      } else {
+        delete queryParams[checkbox.name]
+      }
+      updateURL();
+    }
+    function optionInput(field) {
+      val = field.value;
+      if (!isNaN(val)) {
+        queryParams[field.name] = val;
+      } else {
+        delete queryParams[field.name];
+      }
+      updateURL();
+    }
+    function updateURL() {
+      var url = host;
+      url += "/" + (action || ":action");
+      url += "/" + (destination || ":destination");
+      url += "/" + (playlistID || ":playlist");
+      if (Object.keys(queryParams).length !== 0 && queryParams.constructor === Object) {
+        url += "?"
+        Object.keys(queryParams).forEach(function (param) {
+          url += param + "=" + queryParams[param] + "&";
+        });
+      }
+      url = url.replace(/&+$/, '');
+      document.getElementById("generatedURL").value = url;
+      if (action && destination && playlistID) {
+        var btn = document.getElementById("launch");
+        btn.classList.remove("washed");
+        btn.removeAttribute("disabled");
+      } else {
+        var btn = document.getElementById("launch");
+        btn.classList.add("washed");
+        btn.setAttribute("disabled", true);
+      }
+    }
+    function launch() {
+      if (document.getElementById("builder_form").checkValidity()) {
+        var url = document.getElementById("generatedURL").value;
+        window.open(url, "_blank");
+      } else {
+        document.getElementById("builder_form").reportValidity();
+      }
+    }
+  </script>
+  {{/unless}}
