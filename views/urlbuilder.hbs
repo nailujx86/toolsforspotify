@@ -1,4 +1,12 @@
-<h1>Tools for Spotify</h1>
+<head>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall"></script>
+  <style>
+    pwa-install {
+      --install-button-color: #308f81;
+    }
+  </style>
+</head>
+<h1>Tools for Spotify <pwa-install installbuttontext="Install this App"></pwa-install></h1>
 {{#unless loggedIn}}
 <a class="b primary" onclick="login()">LOGIN</a>
 {{else}}
