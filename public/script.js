@@ -61,6 +61,7 @@ if(!getCookie('theme')){
 
 window.addEventListener("load", function() {
   document.getElementById("toggle-theme").innerHTML = (currentTheme == "dark" ? "☀" : "🌑");
+  document.createElement.classList.add("animate");
 });
 
 setTheme(currentTheme);
