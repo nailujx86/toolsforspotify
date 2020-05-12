@@ -1,12 +1,8 @@
 <head>
   <script type="module" src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall"></script>
-  <style>
-    pwa-install {
-      --install-button-color: #308f81;
-    }
-  </style>
 </head>
-<h1>Tools for Spotify <pwa-install installbuttontext="Install this App"></pwa-install></h1>
+<h1>Tools for Spotify <pwa-install installbuttontext="Install this App"></pwa-install>
+</h1>
 {{#unless loggedIn}}
 <a class="b primary" onclick="login()">LOGIN</a>
 {{else}}
@@ -52,7 +48,8 @@ Hi {{data.username}}!<br>
           <label for="destination_json">JSON 📑</label>
           <input id="destination_csv" type="radio" name="destination" value="csv" onclick="destinationClick(this)">
           <label for="destination_csv">CSV 📄</label>
-          <input id="destination_spotify" type="radio" name="destination" value="spotify"onclick="destinationClick(this)" disabled>
+          <input id="destination_spotify" type="radio" name="destination" value="spotify"
+            onclick="destinationClick(this)" disabled>
           <label for="destination_spotify">Spotify 🎧</label>
           <input id="destination_charts" type="radio" name="destination" value="charts" onclick="destinationClick(this)"
             disabled>
@@ -81,118 +78,120 @@ Hi {{data.username}}!<br>
   <div class="i">
     <div class="card">
       <div class="c">
-        <label for="generatedURL"><h3>Generated URL</h3></label>
+        <label for="generatedURL">
+          <h3>Generated URL</h3>
+        </label>
         <input id="generatedURL" class="full" style="text-align: center;" type="text"
           value="{{data.host}}/:action/:destination/:playlist" readonly><br><br>
         <button id="launch" class="b primary full washed" onclick="launch()" disabled>Launch! 🚀</button>
       </div>
     </div>
   </div>
-
-  <script>
-    var host = "{{ data.host }}";
-    var playlistID = "";
-    var action = "";
-    var destination = "";
-    var queryParams = {};
-    document.getElementById("playlistselection").addEventListener("input", function () {
-      var selectionElement = document.getElementById("playlistselection");
-      var val = selectionElement.options[selectionElement.selectedIndex].value;
-      var idElement = document.getElementById("playlistid");
-      if (val != "") {
-        idElement.setAttribute("readonly", true);
-        idElement.classList.add("washed");
-      } else {
-        idElement.removeAttribute("readonly");
-        idElement.classList.remove("washed");
-      }
-      idElement.value = val;
-      playlistID = val;
-      updateURL();
-    });
-    document.getElementById("playlistid").addEventListener("input", function () {
-      var idElement = document.getElementById("playlistid");
-      var val = idElement.value;
-      playlistID = val;
-      updateURL();
-    });
-    function actionClick(radiobtn) {
-      action = radiobtn.value;
-      updateDestination();
-      updateURL();
+</div>
+<script>
+  var host = "{{ data.host }}";
+  var playlistID = "";
+  var action = "";
+  var destination = "";
+  var queryParams = {};
+  document.getElementById("playlistselection").addEventListener("input", function () {
+    var selectionElement = document.getElementById("playlistselection");
+    var val = selectionElement.options[selectionElement.selectedIndex].value;
+    var idElement = document.getElementById("playlistid");
+    if (val != "") {
+      idElement.setAttribute("readonly", true);
+      idElement.classList.add("washed");
+    } else {
+      idElement.removeAttribute("readonly");
+      idElement.classList.remove("washed");
     }
-    function updateDestination() {
-      if (["generate", "backup"].indexOf(action) != -1) {
-        document.getElementById("destination_spotify").removeAttribute("disabled");
-      } else {
-        document.getElementById("destination_spotify").setAttribute("disabled", true);
-        if (destination == "spotify") {
-          destination = "";
-          document.getElementById("destination_spotify").checked = false;
-        }
-      }
-      if (action == "analyze") {
-        document.getElementById("destination_charts").removeAttribute("disabled");
-      } else {
-        document.getElementById("destination_charts").setAttribute("disabled", true);
-        if (destination == "charts") {
-          destination = "";
-          document.getElementById("destination_charts").checked = false;
-        }
+    idElement.value = val;
+    playlistID = val;
+    updateURL();
+  });
+  document.getElementById("playlistid").addEventListener("input", function () {
+    var idElement = document.getElementById("playlistid");
+    var val = idElement.value;
+    playlistID = val;
+    updateURL();
+  });
+  function actionClick(radiobtn) {
+    action = radiobtn.value;
+    updateDestination();
+    updateURL();
+  }
+  function updateDestination() {
+    if (["generate", "backup"].indexOf(action) != -1) {
+      document.getElementById("destination_spotify").removeAttribute("disabled");
+    } else {
+      document.getElementById("destination_spotify").setAttribute("disabled", true);
+      if (destination == "spotify") {
+        destination = "";
+        document.getElementById("destination_spotify").checked = false;
       }
     }
-    function destinationClick(radiobtn) {
-      destination = radiobtn.value;
-      updateURL();
-    }
-    function optionClick(checkbox) {
-      val = checkbox.checked;
-      if (val == true) {
-        queryParams[checkbox.name] = true;
-      } else {
-        delete queryParams[checkbox.name]
-      }
-      updateURL();
-    }
-    function optionInput(field) {
-      val = field.value;
-      if (!isNaN(val)) {
-        queryParams[field.name] = val;
-      } else {
-        delete queryParams[field.name];
-      }
-      updateURL();
-    }
-    function updateURL() {
-      var url = host;
-      url += "/" + (action || ":action");
-      url += "/" + (destination || ":destination");
-      url += "/" + (playlistID || ":playlist");
-      if (Object.keys(queryParams).length !== 0 && queryParams.constructor === Object) {
-        url += "?"
-        Object.keys(queryParams).forEach(function (param) {
-          url += param + "=" + queryParams[param] + "&";
-        });
-      }
-      url = url.replace(/&+$/, '');
-      document.getElementById("generatedURL").value = url;
-      if (action && destination && playlistID) {
-        var btn = document.getElementById("launch");
-        btn.classList.remove("washed");
-        btn.removeAttribute("disabled");
-      } else {
-        var btn = document.getElementById("launch");
-        btn.classList.add("washed");
-        btn.setAttribute("disabled", true);
+    if (action == "analyze") {
+      document.getElementById("destination_charts").removeAttribute("disabled");
+    } else {
+      document.getElementById("destination_charts").setAttribute("disabled", true);
+      if (destination == "charts") {
+        destination = "";
+        document.getElementById("destination_charts").checked = false;
       }
     }
-    function launch() {
-      if (document.getElementById("builder_form").checkValidity()) {
-        var url = document.getElementById("generatedURL").value;
-        window.open(url, "_blank");
-      } else {
-        document.getElementById("builder_form").reportValidity();
-      }
+  }
+  function destinationClick(radiobtn) {
+    destination = radiobtn.value;
+    updateURL();
+  }
+  function optionClick(checkbox) {
+    val = checkbox.checked;
+    if (val == true) {
+      queryParams[checkbox.name] = true;
+    } else {
+      delete queryParams[checkbox.name]
     }
-  </script>
-  {{/unless}}
+    updateURL();
+  }
+  function optionInput(field) {
+    val = field.value;
+    if (!isNaN(val)) {
+      queryParams[field.name] = val;
+    } else {
+      delete queryParams[field.name];
+    }
+    updateURL();
+  }
+  function updateURL() {
+    var url = host;
+    url += "/" + (action || ":action");
+    url += "/" + (destination || ":destination");
+    url += "/" + (playlistID || ":playlist");
+    if (Object.keys(queryParams).length !== 0 && queryParams.constructor === Object) {
+      url += "?"
+      Object.keys(queryParams).forEach(function (param) {
+        url += param + "=" + queryParams[param] + "&";
+      });
+    }
+    url = url.replace(/&+$/, '');
+    document.getElementById("generatedURL").value = url;
+    if (action && destination && playlistID) {
+      var btn = document.getElementById("launch");
+      btn.classList.remove("washed");
+      btn.removeAttribute("disabled");
+    } else {
+      var btn = document.getElementById("launch");
+      btn.classList.add("washed");
+      btn.setAttribute("disabled", true);
+    }
+  }
+  function launch() {
+    if (document.getElementById("builder_form").checkValidity()) {
+      var url = document.getElementById("generatedURL").value;
+      window.open(url, "_blank");
+    } else {
+      document.getElementById("builder_form").reportValidity();
+    }
+  }
+</script>
+{{/unless}}

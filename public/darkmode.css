@@ -1,0 +1,35 @@
+:root * {
+  transition: color, background-color .3s linear;
+}
+:root.dark body {
+  background-color: #313131;
+  color: #f5f5f5;
+}
+:root.dark .card {
+  background: #494949;
+}
+:root.dark .footer {
+  background-color: #494949;
+}
+:root.dark a, :root.dark .b {
+  color: #49a865;
+}
+:root.dark hr {
+  border: 1px solid #49a865;
+}
+:root.dark .b.primary {
+  color: #fff;
+  background: #49a865;
+  border: solid 1px #49a865;
+}
+:root.dark input, :root.dark select{
+  color: #fff;
+  background-color: #414141;
+}
+:root.dark code {
+  background: #181818;
+}
+
+:root.dark pwa-install {
+  --install-button-color: #49a865;
+}
