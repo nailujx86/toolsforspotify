@@ -32,7 +32,7 @@ function setTheme(theme) {
     document.documentElement.classList.remove("dark");
     setCookie('theme', 'light', 999);
   }
-  if(document.readyState == "interactive")
+  if(document.readyState == "interactive" || document.readyState == "complete")
     document.getElementById("toggle-theme").innerHTML = (theme == "dark" ? "☀" : "🌑");
 }
 
