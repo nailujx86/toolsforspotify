@@ -21,7 +21,7 @@ router.get('/csv/:playlist', requiresLogin, (req, res, next) => {
 
 router.get('/charts/:playlist', requiresLogin, (req, res, next) => {
     res.locals.meta.title = "\"" + res.playlistData.name + "\" Analysis";
-    res.locals.data = JSON.stringify(res.trackInfoData);
+    res.locals.data.trackInfo = JSON.stringify(res.trackInfoData);
     res.render("analysis");
 })
 
