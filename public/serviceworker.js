@@ -1,6 +1,6 @@
 const CACHE = "toolsforspotify-offline";
 const offlineFallbackPage = "offline";
-const offlineData = ["small.css", "darkmode.css", "script.js", "https://fonts.googleapis.com/css2?family=Raleway&display=swap", "https://fonts.gstatic.com/s/raleway/v14/1Ptug8zYS_SKggPNyC0ITw.woff2", "documentation"];
+const offlineData = ["small.css", "darkmode.css", "script.js", "https://fonts.googleapis.com/css2?family=Raleway&display=swap", "https://fonts.gstatic.com/s/raleway/v14/1Ptug8zYS_SKggPNyC0ITw.woff2", "documentation", "manifest.json"];
 
 self.addEventListener("install", function (event) {
   console.log("[toolsforspotify] Install Event processing");
@@ -13,16 +13,28 @@ self.addEventListener("install", function (event) {
   );
 });
 
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', function (event) {
   if (event.request.method !== "GET") return;
-  event.respondWith(
-    fetch(event.request).catch(function(error) {
+  event.respondWith((async () => {
+    try {
+      const networkResponse = await fetch(event.request);
+      if (networkResponse) {
+        return networkResponse;
+      }
+    } catch (error) {
       console.error("[toolsforspotify] Network request Failed. Serving offline page " + error);
-      return caches.match(event.request).then(function(response) {
-        return response || caches.match(offlineFallbackPage);
-      })
-    })
-  );
+    }
+    const cacheResponse = await caches.match(event.request);
+    if (cacheResponse) {
+      return cacheResponse;
+    }
+    const fallback = await caches.match(offlineFallbackPage);
+    if (fallback) {
+      return fallback;
+    }
+    console.log("uhoh..");
+    return;
+  })());
 });
 
 self.addEventListener("refreshOffline", function () {
