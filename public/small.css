@@ -23,7 +23,6 @@ h1,h2,h3,h4,h5,h6 {
 .r {
     margin: 0.4em 0;
     display: table;
-    border-spacing: 1.5em 0;
     table-layout: fixed;
 }
 .full, .r {
@@ -33,6 +32,9 @@ h1,h2,h3,h4,h5,h6 {
     margin: 1.5em 0;
 }
 @media (min-width: 769px){
+    .r{
+        border-spacing: 1.5em 0;
+    }
     .i{
        display: table-cell;
        height: 100%;
