@@ -1,7 +1,7 @@
 <head>
   <script type="module" src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall"></script>
 </head>
-<h1>Tools for Spotify <pwa-install installbuttontext="Install this App"></pwa-install>
+<h1>toolsforspotify <pwa-install installbuttontext="Install this App"></pwa-install>
 </h1>
 {{#unless loggedIn}}
 <a class="b primary" onclick="login()">LOGIN</a>
@@ -10,9 +10,9 @@ Hi {{data.username}}!<br>
 <a class="b primary" href="/logout">LOGOUT</a>
 {{/unless}}
 <hr>
-<h2>Get started</h2>
-<p>You can check out the documentation over at <a href="/documentation">{{data.host}}/documentation</a> or build your
-  own query using the Query Builder below.</p>
+<h2>About</h2>
+<p><b>toolsforspotify</b> is a set of tools for Spotify Playlists that I have been missing personally.</p>
+<p>You can check out the documentation over at <a href="/documentation">{{data.host}}/documentation</a> or use it right away using the Query Builder below.</p>
 <h2>Query Builder</h2>
 {{#unless loggedIn}}
 <p>You have to be logged in to use the Query Builder!</p>
