@@ -25,6 +25,7 @@ Hi {{data.username}}!<br>
   <li><a href="#analyze">Analyze</a></li>
   <li><a href="#generate">Generate</a></li>
   <li><a href="#params">Query Parameters</a></li>
+  <li><a href="#privacy">Privacy</a></li>
 </ol>
 <hr>
 <h3>General</h3>
@@ -145,5 +146,40 @@ Note: Can reduce a playlists length significantly when used with the Generate ac
 Default: false
 </p>
 <hr>
+<h3 id="privacy">Privacy</h3>
+<p>We don't store any data or logs about the logged in user or the processed data on the servers side. All authentication and identification data is stored inside your browser and is sent over an encrypted SSL Connection on each request you make to the Server.</p>
+<h4>Stored Cookies</h4>
+<table>
+  <th>Name</th>
+  <th>Expires</th>
+  <th>Purpose</th>
+  <tr>
+    <td>access_token</td>
+    <td>30 minutes</td>
+    <td>The token used to access the Spotify API in your name.</td>
+  </tr>
+  <tr>
+    <td>refresh_token</td>
+    <td>1 year</td>
+    <td>The token used to refresh the temporary access token.</td>
+  </tr>
+  <tr>
+    <td>user_id</td>
+    <td>1 year</td>
+    <td>Your Spotify User ID, used to add songs to your playlists if you requested to do so.</td>
+  </tr>
+  <tr>
+    <td>user_name</td>
+    <td>1 year</td>
+    <td>Your name as stored on spotify, so I can display the greeting message on the main page.</td>
+  </tr>
+  <tr>
+    <td>theme</td>
+    <td>999 days</td>
+    <td>Your theme selection for this app.</td>
+  </tr>
+</table>
+<p>To delete all data that has been stored, simply delete your cookies and cache for this page.</p>
+<p>If you have any further concerns feel free to take a look at the sourcecode of this App on <a href="https://github.com/nailujx86/toolsforspotify">https://github.com/nailujx86/toolsforspotify</a> or send me a mail at <a href="mailto:mail@nailuj.net">mail@nailuj.net</a>.</p>
 <a class="b primary" href="/">Go back</a>
 <br><br>
