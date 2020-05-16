@@ -1,4 +1,4 @@
-const CACHE = "toolsforspotify-offline";
+const CACHE = "toolsforspotify-offline-v1";
 const offlineFallbackPage = "offline";
 const offlineData = ["small.css", "darkmode.css", "script.js", "https://fonts.googleapis.com/css2?family=Raleway&display=swap", "https://fonts.gstatic.com/s/raleway/v14/1Ptug8zYS_SKggPNyC0ITw.woff2", "documentation", "manifest.json"];
 
@@ -9,6 +9,22 @@ self.addEventListener("install", function (event) {
       var cachePages = offlineData.concat(offlineFallbackPage);
       console.log("[toolsforspotify] Cached offline page during install");
       return cache.addAll(cachePages);
+    })
+  );
+});
+
+self.addEventListener('activate', function (event) {
+  console.log("[toolsforspotify] Checking for old caches..");
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(cacheName) {
+          if(cacheName != CACHE) {
+            console.log("[toolsforspotify] deleting cache " + cacheName)
+            return caches.delete(cacheName);
+          }
+        })
+      );
     })
   );
 });
