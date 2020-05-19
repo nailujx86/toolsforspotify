@@ -19,7 +19,6 @@ app.use(express.static("public"));
 app.use(require('./middleware/populateResLocal'));
 app.use(require('./middleware/spotifyRenew'));
 app.use(require('./middleware/showUsername'));
-app.use(require('./middleware/darkTheme.js'));
 
 app.use((req, res, next) => {
   res.locals.data.startTime = new Date().getTime();
