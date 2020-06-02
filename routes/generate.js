@@ -27,8 +27,12 @@ router.all('/*/:playlist', requireLogin, (req, res, next) => {
   Object.keys(artistCount).forEach(k => artistArray.push({ id: k, count: artistCount[k] }));
   artistArray = artistArray.sort((a, b) => b.count - a.count);
   artistSeeds = [];
-  for (var i = 0; i < ((artistArray.length < 2) ? artistArray.length : 2); i++) {
+  for (var i = 0; i < ((artistArray.length < 5) ? artistArray.length : 5); i++) {
     artistSeeds.push(artistArray[i].id);
+  }
+  artistSeedsRandomized = [];
+  for (var i = 0; i < ((artistSeeds.length < 2) ? artistSeeds.length : 2); i++) {
+    artistSeedsRandomized.push(artistSeeds[Math.floor(Math.random() * artistSeeds.length)]);
   }
   var features = { danceability: 0, energy: 0, acousticness: 0, instrumentalness: 0, liveness: 0, valence: 0, speechiness: 0 };
   for (var dataItem of res.trackInfoData) {
@@ -50,7 +54,7 @@ router.all('/*/:playlist', requireLogin, (req, res, next) => {
   }
   var count = Math.ceil(maxItem / steps);
   trackSeeds = [];
-  for(let j = 0; j < count; j++) {
+  for (let j = 0; j < count; j++) {
     seeds = [];
     for (var i = 0; i < ((res.playlistData.tracks.length < 3) ? res.playlistData.tracks.length : 3); i++) {
       seeds.push(res.playlistData.tracks[Math.floor(Math.random() * res.playlistData.tracks.length)].track.uri.replace("spotify:track:", ""));
@@ -65,15 +69,15 @@ router.all('/*/:playlist', requireLogin, (req, res, next) => {
   var seedStep = 0;
   [...Array(count)].reduce((p, _) =>
     p.then(_ =>
-      spotifyUserApi.getRecommendations({ limit: steps, seed_artists: artistSeeds, seed_tracks: trackSeeds[seedStep], ...targetList }).then(data => {
+      spotifyUserApi.getRecommendations({ limit: steps, seed_artists: artistSeedsRandomized, seed_tracks: trackSeeds[seedStep], ...targetList }).then(data => {
         total += steps;
         seedStep++;
         data.body.tracks.forEach(t => trackList.push({ track: { name: t.name, artists: t.artists.map(i => { return { name: i.name, id: i.id } }), uri: t.uri } }));
       })
-    ).catch(err => {return next(err)})
+    )
     , Promise.resolve())
     .then(() => {
-      if(req.query.unique == "true") {
+      if (req.query.unique == "true") {
         let indexArr = trackList.map(i => i.track.uri);
         trackList = trackList.filter((elem, pos) => {
           return indexArr.indexOf(elem.track.uri) == pos;
