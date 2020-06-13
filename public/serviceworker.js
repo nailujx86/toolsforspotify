@@ -1,4 +1,4 @@
-const CACHE = "toolsforspotify-offline-v1";
+const CACHE = "toolsforspotify-offline-v2";
 const offlineFallbackPage = "offline";
 const offlineData = ["small.css", "darkmode.css", "script.js", "https://fonts.googleapis.com/css2?family=Raleway&display=swap", "https://fonts.gstatic.com/s/raleway/v14/1Ptug8zYS_SKggPNyC0ITw.woff2", "documentation", "manifest.json"];
 
