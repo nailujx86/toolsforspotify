@@ -13,141 +13,179 @@ Hi {{data.username}}!<br>
 </h2>
 <h3>Index</h3>
 <ol>
-  <li>General
+  <li>Query Builder
     <ol>
-      <li><a href="#query">Query Structure</a></li>
-      <li><a href="#export">Destinations</a></li>
-      <li><a href="#playlist">Playlist Types</a></li>
+      <li><a href="#general">General</a></li>
+      <li><a href="#howto">How to Use</a></li>
     </ol>
   </li>
-  <li><a href="#authentication">Authentication</a></li>
-  <li><a href="#backup">Backup</a></li>
-  <li><a href="#analyze">Analyze</a></li>
-  <li><a href="#generate">Generate</a></li>
-  <li><a href="#params">Query Parameters</a></li>
+  <li>REST-API
+    <ol>
+      <li>General
+        <ol>
+          <li><a href="#query">Query Structure</a></li>
+          <li><a href="#export">Destinations</a></li>
+          <li><a href="#playlist">Playlist Types</a></li>
+        </ol>
+      </li>
+      <li><a href="#authentication">Authentication</a></li>
+      <li><a href="#backup">Backup</a></li>
+      <li><a href="#analyze">Analyze</a></li>
+      <li><a href="#generate">Generate</a></li>
+      <li><a href="#params">Query Parameters</a></li>
+    </ol>
+  </li>
   <li><a href="#privacy">Privacy</a></li>
 </ol>
 <hr>
-<h3>General</h3>
-<h4 id="query">Query Structure</h4>
+<a class="b primary" href="/">Go back</a>
+<h3>Query Builder</h3>
+<hr>
+<h4 id="general">General</h4>
+<p>
+  The Query Builder is a graphical Interface that can be used to simplify the Access to the REST-API described below.
+  It is accessible to any logged in User directly on the Main Page <a href="/">{{data.host}}</a>.
+</p>
+<hr>
+<h4 id="howto">How to Use</h4>
+<p>
+  <ol>
+    <li>Log In if not already logged in</li>
+    <li>Select Playlist by either entering the Playlist ID or URI or use the quick selection Box below. The quick selection lets you select from your playlists and automatically grabs the id of that playlist</li>
+    <li>Select what to do with the Playlist. Currently there are three options: Backup, Analyze or Export</li>
+    <li>Select the format/location of the output. On actions that give back spotify tracks like Backup or Generate you can choose to redirect them back to Spotify</li>
+    <li>(Optional) select additional options like an input limit or to reverse the order of the tracks or to shuffle them</li>
+    <li>Hit the "Launch! 🚀" Button below your generated URL! If this is still greyed out there might be a playlist id, action or output type still missing</li>
+  </ol>
+</p>
+<hr>
+<h3>REST-API</h3>
+<hr>
+<h4>General</h4>
+<h5 id="query">Query Structure</h5>
 <p>
   A query consists out of three parts:<br>
-  <ol>
-    <li>Action (Backup, Analyze etc.).</li>
-    <li>Destination (Spotify, JSON, CSV)</li>
-    <li>Playlist Identifier. See more at <a href="#playlist">Playlist Types</a>.</li>
-  </ol>
-  Query Format:
-  <pre><code>{{data.host}}/:action/:destination/:playlist</code></pre>
+<ol>
+  <li>Action (Backup, Analyze etc.).</li>
+  <li>Destination (Spotify, JSON, CSV)</li>
+  <li>Playlist Identifier. See more at <a href="#playlist">Playlist Types</a>.</li>
+</ol>
+Query Format:
+<pre><code>{{data.host}}/:action/:destination/:playlist</code></pre>
 </p>
-<h4 id="export">Destination Types</h4>
+<h5 id="export">Destination Types</h5>
 <p>
   The Destination type defines the data-type an action should return.<br>
   Destinations supported by <i>all</i> actions:
-  <ul>
-    <li>
-      <code>json</code>
-    </li>
-    <li>
-      <code>csv</code>
-    </li>
-  </ul>
-  Action specific Destination types:
-  <ul>
-    <li>Backup
-      <ul>
-        <code>spotify</code>:<br>
-        Creates a new private playlist from the read Tracks.
-      </ul>
-    </li>
-    <li>Generate
-      <ul>
-        <code>spotify</code>:<br>
-        Creates a new private playlist from the generated Tracks.
-      </ul>
-    </li>
-    <li>Analyze
-      <ul>
-        <code>charts</code>:<br>
-        The Charts destination type displays a page with multiple charts representing the playlist itself.
-      </ul>
-    </li>
-  </ul>
+<ul>
+  <li>
+    <code>json</code>
+  </li>
+  <li>
+    <code>csv</code>
+  </li>
+</ul>
+Action specific Destination types:
+<ul>
+  <li>Backup
+    <ul>
+      <code>spotify</code>:<br>
+      Creates a new private playlist from the read Tracks.
+    </ul>
+  </li>
+  <li>Generate
+    <ul>
+      <code>spotify</code>:<br>
+      Creates a new private playlist from the generated Tracks.
+    </ul>
+  </li>
+  <li>Analyze
+    <ul>
+      <code>charts</code>:<br>
+      The Charts destination type displays a page with multiple charts representing the playlist itself.
+    </ul>
+  </li>
+</ul>
 </p>
-<h4 id="playlist">Playlist Types</h4>
+<h5 id="playlist">Playlist Types</h5>
 <p>
   There are three types of arguments you can supply to the playlist part of a query.<br>
   These are:
-  <ol>
-    <li><code>recent</code>:<br>
-      Uses your 50 most recently played songs.
-    </li>
-    <li><code>saved</code>:<br>
-      Uses your "liked/saved" songs.
-    </li>
-    <li><code>:playlist</code>:
-      Uses the Spotify Playlist with the said ID or URI. (e.g. <code>37i9dQZF1DWUKPeBypcpcP</code> or <code>spotify:playlist:37i9dQZF1DWUKPeBypcpcP</code>)</li>
-  </ol>
+<ol>
+  <li><code>recent</code>:<br>
+    Uses your 50 most recently played songs.
+  </li>
+  <li><code>saved</code>:<br>
+    Uses your "liked/saved" songs.
+  </li>
+  <li><code>:playlist</code>:
+    Uses the Spotify Playlist with the said ID or URI. (e.g. <code>37i9dQZF1DWUKPeBypcpcP</code> or
+    <code>spotify:playlist:37i9dQZF1DWUKPeBypcpcP</code>)</li>
+</ol>
 </p>
 <hr>
-<h3 id="authentication">Authentication</h3>
+<h4 id="authentication">Authentication</h4>
 <p>
   There are two ways to provide authentication:
-  <ol>
-    <li>
-      Authenticating via the Log-In Button on this page or below:<br>
-      {{#unless loggedIn}}
-      <a class="b primary" onclick="login()">LOGIN</a>
-      {{else}}
-      <i>(You are already logged in)</i>
-      {{/unless}}
-      <br><br>
-      The authentication is stored in your browsers cookies and is renewed automatically if it expires.
-    </li><br>
-    <li>
-      Supplying a token via the query parameter <code>token</code>.<br>
-      This can be useful if you're in an
-      environment where you are not able to store cookies locally for example in an embedded context.
-      You can generate a token/view your token at <a href="/token">{{data.host}}/token</a>.
-    </li>
-  </ol>
+<ol>
+  <li>
+    Authenticating via the Log-In Button on this page or below:<br>
+    {{#unless loggedIn}}
+    <a class="b primary" onclick="login()">LOGIN</a>
+    {{else}}
+    <i>(You are already logged in)</i>
+    {{/unless}}
+    <br><br>
+    The authentication is stored in your browsers cookies and is renewed automatically if it expires.
+  </li><br>
+  <li>
+    Supplying a token via the query parameter <code>token</code>.<br>
+    This can be useful if you're in an
+    environment where you are not able to store cookies locally for example in an embedded context.
+    You can generate a token/view your token at <a href="/token">{{data.host}}/token</a>.
+  </li>
+</ol>
 </p>
 <hr>
-<h3 id="backup">Backup</h3>
+<h4 id="backup">Backup</h4>
 <p>Collects the songs from the supplied playlist and depending on the destination
   type creates a new playlist or returns them in a file format.</p>
 <hr>
-<h3 id="analyze">Analyze</h3>
+<h4 id="analyze">Analyze</h4>
 <p>Analyzes the tracks on specific audio features like dancability, tempo, mode or acousticness and
   returns them in the requested format.</p>
 <hr>
-<h3 id="generate">Generate</h3>
-<p>Generates recommendations based on the supplied playlist. The amount of recommendations to generate is controlled by the query parameter <code>amount</code>.
-The amount defaults to 50 and the maximum amount of recommendations to generate is 1000.</p>
+<h4 id="generate">Generate</h4>
+<p>Generates recommendations based on the supplied playlist. The amount of recommendations to generate is controlled
+  by the query parameter <code>amount</code>.
+  The amount defaults to 50 and the maximum amount of recommendations to generate is 1000.</p>
 <hr>
-<h3 id="params">Query Parameters</h3>
-<h4><code>token</code></h4>
+<h4 id="params">Query Parameters</h4>
+<h5><code>token</code></h5>
 <p>Used to authenticate without cookies. For more Information see <a href="/token">Token</a>.</p>
-<h4><code>limit</code></h4>
+<h5><code>limit</code></h5>
 <p>Used to define the maximum amount of retrieved tracks.<br>
-Default: 50
-Max: 2500</p>
-<h4><code>reverse</code></h4>
+  Default: 50
+  Max: 2500</p>
+<h5><code>reverse</code></h5>
 <p>Reverses the track order.<br>
-Default: false
+  Default: false
 </p>
-<h4><code>shuffle</code></h4>
+<h5><code>shuffle</code></h5>
 <p>Shuffles your supplied playlist before further processing.<br>
-Default: false
+  Default: false
 </p>
-<h4><code>unique</code></h4>
+<h5><code>unique</code></h5>
 <p>Removes duplicates.<br>
-Note: Can reduce a playlists length significantly when used with the Generate action on outputs amounts higher than 100 songs.<br>
-Default: false
+  Note: Can reduce a playlists length significantly when used with the Generate action on outputs amounts higher than
+  100 songs.<br>
+  Default: false
 </p>
 <hr>
 <h3 id="privacy">Privacy</h3>
-<p>We don't store any data or logs about the logged in user or the processed data on the servers side. All authentication and identification data is stored inside your browser and is sent over an encrypted SSL Connection on each request you make to the Server.</p>
+<p>We don't store any data or logs about the logged in user or the processed data on the servers side. All
+  authentication and identification data is stored inside your browser and is sent over an encrypted SSL Connection on
+  each request you make to the Server.</p>
 <h4>Stored Cookies</h4>
 <table>
   <th>Name</th>
@@ -180,6 +218,8 @@ Default: false
   </tr>
 </table>
 <p>To delete all data that has been stored, simply delete your cookies and cache for this page.</p>
-<p>If you have any further concerns feel free to take a look at the sourcecode of this App on <a href="https://github.com/nailujx86/toolsforspotify">https://github.com/nailujx86/toolsforspotify</a> or send me a mail at <a href="mailto:mail@nailuj.net">mail@nailuj.net</a>.</p>
+<p>If you have any further concerns feel free to take a look at the sourcecode of this App on <a
+    href="https://github.com/nailujx86/toolsforspotify">https://github.com/nailujx86/toolsforspotify</a> or send me a
+  mail at <a href="mailto:mail@nailuj.net">mail@nailuj.net</a>.</p>
 <a class="b primary" href="/">Go back</a>
 <br><br>
