@@ -1,4 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+@font-face {
+    font-family: Raleway;
+    src: url("Raleway.woff");
+}
 html {
     height: 100%;
 }

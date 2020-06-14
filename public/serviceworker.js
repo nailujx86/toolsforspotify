@@ -1,6 +1,6 @@
-const CACHE = "toolsforspotify-offline-v2";
+const CACHE = "toolsforspotify-offline-v3";
 const offlineFallbackPage = "offline";
-const offlineData = ["small.css", "darkmode.css", "script.js", "https://fonts.googleapis.com/css2?family=Raleway&display=swap", "https://fonts.gstatic.com/s/raleway/v14/1Ptug8zYS_SKggPNyC0ITw.woff2", "documentation", "manifest.json"];
+const offlineData = ["small.css", "darkmode.css", "script.js", "Raleway.woff", "documentation", "manifest.json"];
 
 self.addEventListener("install", function (event) {
   console.log("[toolsforspotify] Install Event processing");
@@ -32,13 +32,15 @@ self.addEventListener('activate', function (event) {
 self.addEventListener('fetch', function (event) {
   if (event.request.method !== "GET") return;
   event.respondWith((async () => {
-    try {
-      const networkResponse = await fetch(event.request);
-      if (networkResponse) {
-        return networkResponse;
+    if (!event.request.url.endsWith(".woff")) {
+      try {
+        const networkResponse = await fetch(event.request);
+        if (networkResponse) {
+          return networkResponse;
+        }
+      } catch (error) {
+        console.error("[toolsforspotify] Network request Failed. Serving offline page " + error);
       }
-    } catch (error) {
-      console.error("[toolsforspotify] Network request Failed. Serving offline page " + error);
     }
     const cacheResponse = await caches.match(event.request);
     if (cacheResponse) {
