@@ -67,28 +67,29 @@ router.all('/*/:playlist', requireLogin, (req, res, next) => {
     return { name: features[feature] }
   });
   var seedStep = 0;
-  [...Array(count)].reduce((p, _) =>
-    p.then(_ =>
+
+  var promises = [];
+  for (var i = 0; i < count; i++) {
+    promises.push(
       spotifyUserApi.getRecommendations({ limit: steps, seed_artists: artistSeedsRandomized, seed_tracks: trackSeeds[seedStep], ...targetList }).then(data => {
         total += steps;
         seedStep++;
         data.body.tracks.forEach(t => trackList.push({ track: { name: t.name, artists: t.artists.map(i => { return { name: i.name, id: i.id } }), uri: t.uri } }));
       })
-    )
-    , Promise.resolve())
-    .then(() => {
-      if (req.query.unique == "true") {
-        let indexArr = trackList.map(i => i.track.uri);
-        trackList = trackList.filter((elem, pos) => {
-          return indexArr.indexOf(elem.track.uri) == pos;
-        });
-      }
-      res.recommendationData = { name: "Recommendations from " + res.playlistData.name, tracks: trackList };
-      return next();
-    })
-    .catch(err => {
-      return next(err);
-    })
+    );
+  }
+  Promise.all(promises).then(() => {
+    if (req.query.unique == "true") {
+      let indexArr = trackList.map(i => i.track.uri);
+      trackList = trackList.filter((elem, pos) => {
+        return indexArr.indexOf(elem.track.uri) == pos;
+      });
+    }
+    res.recommendationData = { name: "Recommendations from " + res.playlistData.name, tracks: trackList };
+    return next();
+  }).catch(err => {
+    return next(err);
+  });
 });
 
 router.get('/spotify/:playlist', requireLogin, (req, res, next) => {
