@@ -1,6 +1,6 @@
 {
   "name": "toolsforspotify",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "A collection of web-based tools for spotify playlists.",
   "main": "server.js",
   "author": "Julian Blazek <julian.blazek@outlook.de>",
