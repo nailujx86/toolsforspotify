@@ -52,21 +52,19 @@ router.get('/*/saved', requiresLogin, (req, res, next) => {
   var total = 0;
   var count = Math.ceil(maxItem / steps);
   var trackList = [];
-  [...Array(count)].reduce((p, _) =>
-    p.then(_ =>
+  var promises = [];
+  for (var i = 0; i < count; i++) {
+    promises.push(
       spotifyUserApi.getMySavedTracks({ offset: total, limit: steps }).then(data => {
         total += steps;
         data.body.items.forEach(t => trackList.push({ track: { name: t.track.name, artists: t.track.artists.map(i => { return { name: i.name, id: i.id } }), uri: t.track.uri } }));
       })
-    )
-    , Promise.resolve())
-    .then(() => {
-      res.playlistData = { name: "Saved Tracks", tracks: trackList };
-      return next();
-    })
-    .catch(err => {
-      return next(err);
-    })
+    );
+  }
+  Promise.all(promises).then(() => {
+    res.playlistData = { name: "Saved Tracks", tracks: trackList };
+    return next();
+  });
 });
 
 router.get('/*/:playlist', requiresLogin, (req, res, next) => {
@@ -103,19 +101,19 @@ router.get('/*/:playlist', requiresLogin, (req, res, next) => {
       }
       name = data.body.name || name;
       var count = Math.ceil(maxItem / steps);
-      [...Array(count)].reduce((p, _) => // Sorry for sorcery
-        p.then(_ =>
+      for (var i = 0; i < count; i++) {
+        promises.push(
           spotifyUserApi.getPlaylistTracks(playlistID, { fields: "items(track(name,uri,artists))", offset: total, limit: steps }).then(data => {
             total += steps;
             data.body.items.forEach(i => i.track.artists = i.track.artists.map(i => { return { name: i.name, id: i.id } }));
             tracks.push(...data.body.items);
           })
-        )
-        , Promise.resolve())
-        .then(() => {
-          res.playlistData = { name: name, tracks: tracks };
-          return next();
-        })
+        );
+      }
+      Promise.all(promises).then(() => {
+        res.playlistData = { name: name, tracks: tracks };
+        return next();
+      })
     })
     .catch(err => {
       var error = new Error("Playlist not found!");

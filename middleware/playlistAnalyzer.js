@@ -17,21 +17,19 @@ router.use((req, res, next) => {
   var count = Math.ceil(ids.length / 100);
   var total = 0;
   var trackInfos = [];
-  [...Array(count)].reduce((p, _) =>
-    p.then(_ =>
+  var promises = [];
+  for (var i = 0; i < count; i++) {
+    promises.push(
       spotifyUserApi.getAudioFeaturesForTracks(ids.slice(total, total + 100)).then(data => {
         total += 100;
         trackInfos.push(...data.body.audio_features);
       })
-    )
-    , Promise.resolve())
-    .then(() => {
-      res.trackInfoData = trackInfos;
-      return next();
-    })
-    .catch((err) => {
-      return next(err);
-    })
+    );
+  }
+  Promise.all(promises).then(() => {
+    res.trackInfoData = trackInfos;
+    return next();
+  });
 });
 
 module.exports = router;
