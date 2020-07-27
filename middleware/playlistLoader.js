@@ -101,6 +101,7 @@ router.get('/*/:playlist', requiresLogin, (req, res, next) => {
       }
       name = data.body.name || name;
       var count = Math.ceil(maxItem / steps);
+      var promises = [];
       for (var i = 0; i < count; i++) {
         promises.push(
           spotifyUserApi.getPlaylistTracks(playlistID, { fields: "items(track(name,uri,artists))", offset: total, limit: steps }).then(data => {
